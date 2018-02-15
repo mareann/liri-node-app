@@ -36,27 +36,39 @@ var spotify = new Spotify({
   secret: 'f33afec276854bf78d1eded32abeede2'
 });
 */
+//if ( nodeArgs[2] == "spotify-this-song")
 
 var spotify = new Spotify({
   id: process.env.SPOTIFY_ID,
   secret: process.env.SPOTIFY_SECRET
 });
+/*`node liri.js spotify-this-song '<song name here>'`
 
-spotify.search({ type: 'track', query: 'The winner takes it all' })
+   * This will show the following information about the song in your terminal/bash window
+     
+     * Artist(s)
+     
+     * The song's name
+     
+     * A preview link of the song from Spotify
+     
+     * The album that the song is from
+
+   * If no song is provided then your program will default to "The Sign" 
+   by Ace of Base.
+*/ 
+//spotify.search({ type: 'track', query: 'The winner takes it all' })
+spotify.search({ type: 'track', query: 'The Sign by Ace of Base' })
  .then(function(response) {
-    console.log(JSON.stringify(response,null,2));
+    //console.log(JSON.stringify(response,null,2));
+    console.log("ARTIST : "+response.tracks.items[0].artists[0].name,
+              "\nNAME   : "+response.tracks.items[0].name,
+              "\nlink   : "+response.tracks.items[0].album.external_urls.spotify,
+              "\nALBUM  : "+response.tracks.items[0].album.name)
   })
   .catch(function(err) {
     console.log(err);
-  }); 
-/* , function(err, data) {
-  if (err) {
-    return console.log('Error occurred: ' + err);
-  }
-  else
-    console.log("what?")
-console.log(data);*/ 
-//);
+  });
 
 //var client = new Twitter(keys.twitter);
 if ( nodeArgs[2] == "my-tweets")
