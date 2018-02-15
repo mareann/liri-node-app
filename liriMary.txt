@@ -1,0 +1,5 @@
+liriMary
+Language_ Interpretation and Recognition Interface.
+
+Client ID 82af7591abe4452cb92d259ef4972dd4
+Client Secret f33afec276854bf78d1eded32abeede2
