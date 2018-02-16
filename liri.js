@@ -44,6 +44,8 @@
 var request = require("request");
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
+//var fs      = require('fs');
+var read = require("read-file")
 require("dotenv").config();
 
 // Using the require keyword lets us access all of the exports
@@ -78,6 +80,27 @@ console.log(keys.spotify.secret)
 //     as follows the text in `random.txt`.
 //     
 //     * Feel free to change the text in that document to test out the feature for other commands.
+if ( nodeArgs[2] == "do-what-it-says" )
+{
+   readCommandFile();
+}
+
+
+function readCommandFile() {
+
+ read("random.txt", 'utf8', function(err, buffer) {
+   //=> 'some contents...'
+   //console.log("err "+err)
+   //console.log("buf "+buffer)
+   var ret = buffer.split(",");
+   var command = ret[0];
+   var arg = ret[1]
+   console.log(command+" "+arg)
+   spotifyThisSong(arg)
+   //var command = buffer.toString()
+   //console.log(command)
+ });
+}
 
 if ( nodeArgs[2] == "movie-this" )
 {
@@ -166,9 +189,9 @@ function GetMovieInfo()
 }
 
 if ( nodeArgs[2] == "spotify-this-song")
-   SpotifyThisSong();
+   spotifyThisSong();
 
-function SpotifyThisSong()
+function spotifyThisSong(song)
 {
 var spotify = new Spotify({
   id: process.env.SPOTIFY_ID,
@@ -195,31 +218,41 @@ var spotify = new Spotify({
    both albums and tracks with "abacab" in their name.
 */ 
 //spotify.search({ type: 'track', query: 'The winner takes it all' })
+var query = "";
+//console.log("song "+song)
+if (song == null)
+{
+  song = 'The Sign';
+  var artist = 'Ace of Base';
+  query = song+" "+artist;
+ // console.log("song+artist "+query)
 
-var song = 'The Sign';
-var artist = 'Ace of Base';
-var query = song+" "+artist;
-
-console.log("nodeArgs is "+nodeArgs.length)
-if ( nodeArgs.length >= 4 )
- {
-   query = " ";
-   for ( var i = 3; i<nodeArgs.length;i++)
-    {
-      if ( nodeArgs[i] != undefined )
-       {
-         if (i === 3)
-          query = nodeArgs[3];
-         else
-           query += " "+nodeArgs[i];
-         console.log("query "+query)
-       }
-    }
+  console.log("nodeArgs length "+nodeArgs.length)
+  if ( nodeArgs.length >= 4 )
+   {
+     query = " ";
+     for ( var i = 3; i<nodeArgs.length;i++)
+      {
+        if ( nodeArgs[i] != undefined )
+         {
+           if (i === 3)
+            query = nodeArgs[3];
+           else
+             query += " "+nodeArgs[i];
+           console.log("query "+query)
+         }
+      }
  }
-
+}
+else
+{
+   query = song;
+   //console.log("file "+query) 
+}
+  
 spotify.search({ type: 'track', query: query })
  .then(function(response) {
-    console.log(JSON.stringify(response,null,2));
+    //console.log(JSON.stringify(response,null,2));
     console.log("ARTIST : "+response.tracks.items[0].artists[0].name,
               "\nNAME   : "+response.tracks.items[0].name,
               "\nLINK   : "+response.tracks.items[0].album.external_urls.spotify,
