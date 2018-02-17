@@ -240,7 +240,7 @@ function spotifyThisSong(song)
    .catch(function(err) {
       console.log(err);
    });
-} // end spotify
+} // end spotifyThisSong
 
 /////////////////////////////////////////
 //  my-tweets command
