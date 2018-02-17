@@ -18,7 +18,8 @@ You'll find these Node packages here:
 
    * [DotEnv](https://www.npmjs.com/package/dotenv)
 
-     
+Set up your .env file with your Twitter and Spotify Keys
+
 USAGE options:
 
   1   Display your tweets
@@ -142,7 +143,7 @@ NOTES
 
 $ node liri.js my-tweets
 
-response sample data partial
+response sample data (partial)
 
 { statuses: 
    [ { created_at: 'Wed Feb 14 23:38:52 +0000 2018',
