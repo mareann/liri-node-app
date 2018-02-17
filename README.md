@@ -72,6 +72,14 @@ USAGE options:
        
  Make a file called `random.txt` to use the do-it-this-way command.
        
-   * Inside of `random.txt` put the following in with no extra characters or white space:
+   * Inside of `random.txt` put one of the following in with no extra characters or white space:
    
-     * spotify-this-song,"I Want it That Way"
+     spotify-this-song,"I Want it That Way"
+     
+     or
+     
+     movie-this,the godfather
+
+     or
+     
+     my-tweets
