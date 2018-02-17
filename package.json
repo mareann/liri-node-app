@@ -15,7 +15,9 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^5.0.0",
+    "fs": "0.0.1-security",
     "node-spotify-api": "^1.0.7",
+    "read-file": "^0.2.0",
     "request": "^2.83.0",
     "twitter": "^1.7.1"
   },
