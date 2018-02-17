@@ -93,7 +93,6 @@ NOTES
   
    { Response: 'False', Error: 'Movie not found!' }
 
-
     movie-this response sample (default):
 
   $ node liri.js movie-this
@@ -108,7 +107,7 @@ NOTES
 
  $ node liri spotify-this the winner takes it all
  
- sample data (partial)
+ response sample data (partial)
  
  {
   "tracks": {
@@ -143,7 +142,7 @@ NOTES
 
 $ node liri.js my-tweets
 
-partial
+response sample data partial
 
 { statuses: 
    [ { created_at: 'Wed Feb 14 23:38:52 +0000 2018',
