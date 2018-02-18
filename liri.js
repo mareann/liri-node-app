@@ -61,6 +61,7 @@ var request = require("request");
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var read = require("read-file")
+var fs = require("fs")
 require("dotenv").config();
 
 // Using the require keyword lets us access all of the exports
@@ -107,6 +108,22 @@ switch (command) {
       break;
 }
 
+function writeLog(command) {
+  var textFile = "log.txt"
+  var text = command+"\n"
+
+  fs.appendFile(textFile, text, function(err) {
+
+  // If an error was experienced we say it.
+  if (err) {
+    console.log(err);
+  }
+
+  // If no error is experienced, we'll log the phrase "Content Added" to our node console.
+  //else 
+  //  console.log("Content Added to "+textFile+"!");
+});
+}
 /////////////////////////////////////////
 //  do-what-it-says command
 //  runCommandFile
@@ -121,8 +138,13 @@ function runCommandFile() {
    var command = ret[0];
    var arg = ret[1]
 
-   if ( command == 'spotify-this-song') 
+   if ( command == 'spotify-this-song')
+   {
+     var myText = "do-what-it-says "+command+" "+arg
+     console.log(myText)
+     writeLog(myText)
      spotifyThisSong(arg)
+   }
    if ( command === "my-tweets")
        GetMyTweets();
    if ( command === "movie-this")
@@ -159,9 +181,6 @@ function GetMovieInfo(arg)
   // Then run a request to the OMDB API with the movie specified
   var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
 
-  // This line is just to help us debug against the actual URL.
-  //console.log(queryUrl);
-
   request(queryUrl, function(error, response, body) {
   
     var Response=JSON.parse(body).Response;
@@ -169,19 +188,27 @@ function GetMovieInfo(arg)
  
   // If the request is successful
     if ( Response != "False" ) {
-      var country = JSON.parse(body).Country
-      console.log("Title           : "+JSON.parse(body).Title+" ("+JSON.parse(body).Rated+")");
-      console.log("Release Year    : "+JSON.parse(body).Year)
-      console.log("IMDB Rating     : "+JSON.parse(body).imdbRating);
+      var country    = JSON.parse(body).Country
+      var movie      = JSON.parse(body).Title
+      var movieTitle = "\nTitle           : "+JSON.parse(body).Title+" ("+JSON.parse(body).Rated+")"
+      var movieYear  = "\nRelease Year    : "+JSON.parse(body).Year
+      var IMDBRating = "\nIMDB Rating     : "+JSON.parse(body).imdbRating
       if (JSON.parse(body).Ratings[1])
-        console.log("Rotten Tomatoes : "+JSON.parse(body).Ratings[1].Value)
+        var movieRT  = "\nRotten Tomatoes : "+JSON.parse(body).Ratings[1].Value
       else
-        console.log("Rotten Tomatoes : none")
-      console.log("Country         : "+country);
-      console.log("Language        : "+JSON.parse(body).Language);
-      console.log("Plot            : "+JSON.parse(body).Plot);
-      console.log("Actors          : "+JSON.parse(body).Actors);
-      console.log("Awards          : "+JSON.parse(body).Awards);
+        var movieRT  = "\nRotten Tomatoes : none"
+      var movieCountry   = "\nCountry         : "+country
+      var movieLanguage  = "\nLanguage        : "+JSON.parse(body).Language
+      var moviePlot      = "\nPlot            : "+JSON.parse(body).Plot
+      var movieActors    = "\nActors          : "+JSON.parse(body).Actors
+      var movieAwards    = "\nAwards          : "+JSON.parse(body).Awards
+
+      command = "----------------\n"+command +" "+movie
+      //console.log(command)
+      command = command+movieTitle+movieYear+IMDBRating+movieRT+movieCountry+
+      movieLanguage+moviePlot+movieActors+movieAwards
+      console.log(command)
+      writeLog(command)
     } // if Response is not False
    else
     console.log(movieName+"movie not found. Please remove any punctuation like a .")
@@ -196,10 +223,7 @@ function GetMovieInfo(arg)
 ////////////////////////////////////////
 function spotifyThisSong(song)
 {
-  var spotify = new Spotify({
-    id: process.env.SPOTIFY_ID,
-    secret: process.env.SPOTIFY_SECRET
-  });
+  var spotify = new Spotify(keys.spotify)
 
   var query = "";
 
@@ -232,10 +256,16 @@ function spotifyThisSong(song)
   spotify.search({ type: 'track', query: query })
    .then(function(response) {
     //console.log(JSON.stringify(response,null,2));
-    console.log("ARTIST : "+response.tracks.items[0].artists[0].name,
-              "\nNAME   : "+response.tracks.items[0].name,
-              "\nLINK   : "+response.tracks.items[0].album.external_urls.spotify,
-              "\nALBUM  : "+response.tracks.items[0].album.name)
+    var songName   = response.tracks.items[0].name
+    var songArtist =   "ARTIST : "+response.tracks.items[0].artists[0].name
+    var songOut    = "\nNAME   : "+songName
+    var songLink   = "\nLINK   : "+response.tracks.items[0].album.external_urls.spotify
+    var songAlbum  = "\nALBUM  : "+response.tracks.items[0].album.name
+    var outScreen = songArtist+songOut+songLink+songAlbum;
+    //console.log(outScreen);
+    command = "----------------\n"+command+" "+songName+"\n"+outScreen;
+     console.log(command)
+     writeLog(command)
     })
    .catch(function(err) {
       console.log(err);
@@ -249,7 +279,8 @@ function spotifyThisSong(song)
 ////////////////////////////////////////
 function GetMyTweets() {
   var client = new Twitter(keys.twitter);
-
+  
+  command += "\n"
   //post twitter status
   if (0)
   {
@@ -289,11 +320,12 @@ function GetMyTweets() {
              text: text
            };
          tweetsArray[i] = tweet[i+1];
-         console.log("-----------------"+" Tweet # "+(i+1)+" -----------------")
-         console.log(tweet[i+1].created+"\n"+tweet[i+1].text)
+         var tweetText = "-----"+" Tweet # "+(i+1)+" "+tweet[i+1].created+" "+tweet[i+1].text+"\n"
+         console.log(tweetText)
+         command += tweetText
        }
       }
-       console.log("----------------------------------------------") 
+      writeLog(command) 
     } // end if no error
  }); // end client.get
 } //end GetMyTweets
